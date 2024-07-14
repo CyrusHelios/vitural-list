@@ -67,18 +67,11 @@ const updateItemPosition = () => {
     if (isUpdated) continue;
     const oldHeight = itemPosition[index].height;
     const domHeight = getDOMHeight(node);
-    // const domHeight = isUpdated ? oldHeight : getDOMHeight(node);
     const diffHeight = domHeight - oldHeight;
     itemPosition[index].updated = true;
     isNeedUpdateAll = true; // 后面的节点需要更新信息
     if (diffHeight) {
       itemPosition[index].height = domHeight;
-
-      // itemPosition[index].bottom += diffHeight;
-      // for (let i = index + 1; i < itemPosition.length; i++) {
-      //   itemPosition[i].top = itemPosition[i - 1].bottom;
-      //   itemPosition[i].bottom += diffHeight;
-      // }
     }
   }
   if (isNeedUpdateAll) {
