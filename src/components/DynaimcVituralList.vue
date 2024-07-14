@@ -18,7 +18,6 @@ const screenHeight = 450; // 可视区域的高度
 const visibleCount = Math.ceil(screenHeight / props.estimatedItemSize); // 可显示的列表项数
 
 const startIndex = ref<number>(0); // 开始索引
-const startOffset = ref<number>(0); // 渲染区域的偏移量
 const itemPosition: itemPosition[] = [];
 const containerRef = ref();
 const itemRef = ref();
@@ -33,6 +32,10 @@ const startRenderedIndex = computed(() =>
 const visibleData = computed(() => {
   return props.listData.slice(startRenderedIndex.value, endIndex.value);
 }); // 列表的渲染数据
+const startOffset = computed(() => {
+  // 获取列表距离顶部的偏移量
+  return itemPosition[startRenderedIndex.value].top;
+}); // 渲染区域的偏移量
 
 // 初始化position数据
 props.listData.forEach((_, index) => {
@@ -62,7 +65,6 @@ const updateItemPosition = () => {
     const index = +(node.dataset.index ?? "");
     const isUpdated = itemPosition[index].updated;
     if (isUpdated) continue;
-    console.log(isUpdated);
     const oldHeight = itemPosition[index].height;
     const domHeight = getDOMHeight(node);
     // const domHeight = isUpdated ? oldHeight : getDOMHeight(node);
@@ -94,8 +96,6 @@ const updateItemPosition = () => {
 const onScroll = () => {
   // 获取渲染的起始索引
   startIndex.value = getStartIndex(containerRef.value.scrollTop);
-  // 获取列表距离顶部的偏移量
-  startOffset.value = itemPosition[startRenderedIndex.value].top;
 };
 // 在 list 数组中到第一个大于等于 value 的索引
 const binarySearch = (list: Array<itemPosition>, value: number): number => {
