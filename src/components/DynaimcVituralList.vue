@@ -65,14 +65,10 @@ const updateItemPosition = () => {
     const index = +(node.dataset.index ?? "");
     const isUpdated = itemPosition[index].updated;
     if (isUpdated) continue;
-    const oldHeight = itemPosition[index].height;
     const domHeight = getDOMHeight(node);
-    const diffHeight = domHeight - oldHeight;
     itemPosition[index].updated = true;
     isNeedUpdateAll = true; // 后面的节点需要更新信息
-    if (diffHeight) {
-      itemPosition[index].height = domHeight;
-    }
+    itemPosition[index].height = domHeight;
   }
   if (isNeedUpdateAll) {
     const startUpdateIndex = +(nodes[0].dataset.index ?? "");
