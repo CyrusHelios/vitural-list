@@ -13,7 +13,6 @@ const visibleCount = Math.ceil(screenHeight / props.itemSize); // 可显示的�
 
 const containerRef = ref<HTMLElement>();
 const startIndex = ref<number>(0); // 开始索引
-const listOffset = ref<number>(0); // 渲染区域相对于可视区域的滚回距离
 
 const endIndex = computed(() =>
   Math.min(startIndex.value + visibleCount + bufferCount, props.listData.length)
@@ -24,19 +23,19 @@ const startRenderedIndex = computed(() =>
 const visibleData = computed(() => {
   return props.listData.slice(startRenderedIndex.value, endIndex.value);
 }); // 列表显示的数据
-
+/**
+ * 由于滚动可视区域也会导致渲染区域的滚动，所以需要将渲染区域滚回可视区域，
+ * 假设可视区域的滚动距离为 scrollTop，如果渲染区域总是滚回 scrollTop，
+ * 那么渲染区域总是会渲染 startRenderedIndex 开头的完整 item，但大部分情况下，
+ * 可视区域滚动之后，item 是不完整显示的，比如滚动距离是 120，那实际滚回距离应该是 100
+ * 剩下的 20 是不需要滚回来的，所以就可以得出滚回的距离是 startRenderedIndex * itemSize
+ */
+const listOffset = computed(() => {
+  return startRenderedIndex.value * props.itemSize;
+}); // 渲染区域相对于可视区域的滚回距离
 const onScroll = () => {
   const scrollTop = containerRef.value!.scrollTop;
   startIndex.value = Math.floor(scrollTop / props.itemSize);
-  /**
-   * 由于滚动可视区域也会导致渲染区域的滚动，所以需要将渲染区域滚回可视区域，
-   * 假设可视区域的滚动距离为 scrollTop，如果渲染区域总是滚回 scrollTop，
-   * 那么渲染区域总是会渲染 startRenderedIndex 开头的完整 item，但大部分情况下，
-   * 可视区域滚动之后，item 是不完整显示的，比如滚动距离是 120，那实际滚回距离应该是 100
-   * 剩下的 20 是不需要滚回来的，所以就可以得出滚回的距离是 startRenderedIndex * itemSize
-   */
-
-  listOffset.value = startRenderedIndex.value * props.itemSize;
 };
 const getCssVarialbes = (value: number) => value + "px";
 </script>
